@@ -63,12 +63,19 @@ void describeGraph(graph *_graph)
 
 
 #define BUFFER_SIZE 1024
-char *getUserInput(){
-
-    char *string;
-    string = malloc(BUFFER_SIZE);
-    printf("\nEnter your math funciton : ");
-    fgets(string,BUFFER_SIZE,stdin);
+char *getMathFunctionInput()
+{
+    char *string = malloc(BUFFER_SIZE);
+    if (string == NULL)
+    {
+        printf("Memory allocation failed!");
+        exit(EXIT_FAILURE);
+    }
+    printf("\nEnter your math function: ");
+    fgets(string, 1024, stdin);
+    // ENlever le retour a la ligne et mettre '\0' a la place
+    if (string[strlen(string) - 1] == '\n')
+        string[strlen(string) - 1] = '\0';
     printf("\n");
     return string;
 }
@@ -89,7 +96,7 @@ int main(int argc, char const *argv[])
     graph *_graph = createGraph(10, 10);
     describeGraph(_graph);
 
-    getUserInput();
+    char *userInput = getMathFunctionInput();
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -103,5 +110,6 @@ int main(int argc, char const *argv[])
     printf("\n\n");
     CloseWindow();
     free(_graph);
+    free(userInput);
     return 0;
 }
