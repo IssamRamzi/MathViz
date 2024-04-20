@@ -23,9 +23,6 @@ graph *createGraph(const int rows, const int cols)
 
 void renderGraph(graph *_graph)
 {
-    int centerX = (_graph->columns / 2) * _graph->step + _graph->step / 2; // x-coordinate of the center
-    int centerY = (_graph->rows / 2) * _graph->step + _graph->step / 2;    // y-coordinate of the center
-
     for (int i = 0; i < _graph->columns; i++)
     {
         for (int j = 0; j < _graph->rows; j++)
@@ -33,14 +30,21 @@ void renderGraph(graph *_graph)
             DrawRectangleLines(i * _graph->step, j * _graph->step, _graph->step, _graph->step, BLACK);
         }
     }
+    Vector2 i_start = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2};
+    Vector2 i_end = {WINDOW_WIDTH / 2 + _graph->step, WINDOW_HEIGHT / 2};
 
-    DrawCircle(centerX, centerY, _graph->step / 4, RED); // Draw a circle at the center
+    Vector2 j_start = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2};
+    Vector2 j_end = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - _graph->step};
+
+    DrawLineEx(i_start, i_end, 4, GREEN);
+    DrawLineEx(j_start, j_end, 4, GREEN);
+    DrawCircle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 10, RED);
+    DrawText("(0,0)", WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT / 2 + 5, 20, RED);
 }
-
 
 void describeGraph(graph *_graph)
 {
-    printf("\nGraph : %d [columns], %d [rows]", _graph->columns, _graph->rows);
+    printf("\nGraph : %d [columns], %d [rows]\n", _graph->columns, _graph->rows);
 }
 
 // ! ---------------------------------------------------------------------------------------- ! //
@@ -49,12 +53,10 @@ int main(int argc, char const *argv[])
 {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     SetTargetFPS(60);
-    graph *_graph = createGraph(20, 20);
+    system("clear");
 
-    BeginDrawing();
-
-    EndDrawing();
-
+    graph *_graph = createGraph(10, 10);
+    describeGraph(_graph);
 
     while (!WindowShouldClose())
     {
@@ -66,6 +68,7 @@ int main(int argc, char const *argv[])
         EndDrawing();
     }
 
+    printf("\n\n");
     CloseWindow();
 
     return 0;
