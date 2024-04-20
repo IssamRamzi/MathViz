@@ -36,6 +36,9 @@ void renderGraph(graph *_graph)
     Vector2 j_start = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2};
     Vector2 j_end = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - _graph->step};
 
+    DrawText("-->\n J ",WINDOW_WIDTH / 2 - 35,WINDOW_HEIGHT / 2 - 50,20,GREEN);
+    DrawText("-->\n I ",WINDOW_WIDTH / 2 + 30,WINDOW_HEIGHT / 2 - 40,20,GREEN);
+
     DrawLineEx(i_start, i_end, 4, GREEN);
     DrawLineEx(j_start, j_end, 4, GREEN);
     DrawCircle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 10, RED);
