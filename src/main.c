@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "raylib.h"
 #include "constants.h"
-#include "headers/graph.h"
 
 typedef struct
 {
@@ -23,13 +23,19 @@ graph *createGraph(const int rows, const int cols)
 
 void renderGraph(graph *_graph)
 {
-    for (int i = 0; i < _graph->columns; i++)
+    for (int i = 0; i < _graph->columns; i++) // dessine le graphe
     {
         for (int j = 0; j < _graph->rows; j++)
         {
             DrawRectangleLines(i * _graph->step, j * _graph->step, _graph->step, _graph->step, BLACK);
         }
     }
+    Vector2 mainLineXStart = {0,WINDOW_HEIGHT /2};
+    Vector2 mainLineXEnd = {WINDOW_WIDTH,WINDOW_HEIGHT /2};
+
+    Vector2 mainLineYStart = {WINDOW_WIDTH /2,0};
+    Vector2 mainLineYEnd = {WINDOW_WIDTH / 2,WINDOW_HEIGHT};
+
     Vector2 i_start = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2};
     Vector2 i_end = {WINDOW_WIDTH / 2 + _graph->step, WINDOW_HEIGHT / 2};
 
@@ -39,16 +45,38 @@ void renderGraph(graph *_graph)
     DrawText("-->\n J ",WINDOW_WIDTH / 2 - 35,WINDOW_HEIGHT / 2 - 50,20,GREEN);
     DrawText("-->\n I ",WINDOW_WIDTH / 2 + 30,WINDOW_HEIGHT / 2 - 40,20,GREEN);
 
-    DrawLineEx(i_start, i_end, 4, GREEN);
-    DrawLineEx(j_start, j_end, 4, GREEN);
-    DrawCircle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 10, RED);
-    DrawText("(0,0)", WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT / 2 + 5, 20, RED);
+    DrawLineEx(mainLineXStart, mainLineXEnd, 4, BLACK); // Dessine la ligne (0) X
+    DrawLineEx(mainLineYStart, mainLineYEnd, 4, BLACK); // Dessine la ligne (0) Y
+
+    DrawLineEx(i_start, i_end, 4, GREEN); // Dessine le vecteur I
+    DrawLineEx(j_start, j_end, 4, GREEN); // Dessine le vecteur J
+    DrawCircle(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 10, RED); // Dessine le point (0,0)
+    DrawText("(0,0)", WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT / 2 + 5, 20, RED); // Dessine le text (0,0)
 }
 
 void describeGraph(graph *_graph)
 {
-    printf("\nGraph : %d [columns], %d [rows]\n", _graph->columns, _graph->rows);
+    printf("\nGraph : [columns] %d ,[rows] %d \n", _graph->columns, _graph->rows);
 }
+
+// ? ---------------------------------------------------------------------------------------- ? //
+
+
+#define BUFFER_SIZE 1024
+char *getUserInput(){
+
+    char *string;
+    string = malloc(BUFFER_SIZE);
+    printf("\nEnter your math funciton : ");
+    fgets(string,BUFFER_SIZE,stdin);
+    printf("\n");
+    return string;
+}
+
+
+
+
+
 
 // ! ---------------------------------------------------------------------------------------- ! //
 
@@ -61,6 +89,7 @@ int main(int argc, char const *argv[])
     graph *_graph = createGraph(10, 10);
     describeGraph(_graph);
 
+    getUserInput();
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -73,6 +102,6 @@ int main(int argc, char const *argv[])
 
     printf("\n\n");
     CloseWindow();
-
+    free(_graph);
     return 0;
 }
