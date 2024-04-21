@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "raylib.h"
 #include "constants.h"
@@ -61,8 +62,113 @@ void describeGraph(graph *_graph)
 
 // ? ---------------------------------------------------------------------------------------- ? //
 
-
+#define MAX_TOKEN_SIZE 256 
 #define BUFFER_SIZE 1024
+
+typedef enum{
+    NUMBER,
+    OPERATOR,
+    VARIABLE,
+    LEFT_PAREN,
+    RIGHT_PAREN
+} TokenType;
+
+
+typedef struct 
+{
+    TokenType type;
+    char value[MAX_TOKEN_SIZE];
+} Token;
+
+
+bool is_operator(char c){
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+}
+
+Token *tokenize(const char* input){
+    Token* tokens = malloc(sizeof(Token) * (strlen(input) + 1)); // +1 for the end-of-tokens marker
+ // Alloue la taille (token * la_taille_de_la_chaine) 
+    int token_count = 0; // voir le nombre de tokens
+
+    int index = 0;
+
+    while (input[index] != '\0')
+    {
+        char c = input[index];
+        if(isspace(c) != '\0'){
+            index++;
+            continue;
+        }
+
+        // Check pour les opérateurs
+        if(is_operator(c)){
+            tokens[token_count].type = OPERATOR; // TYpe du token operateur
+            tokens[token_count].value[0] = c; // valeur du token
+            tokens[token_count].value[1] = '\0';
+            token_count++; // incrementer la taille 
+            index++;    // incrementer l'index pour la string
+            continue;
+        }
+
+        // Check for numbers 
+        if(isdigit(c)){
+            int j = 0;
+
+            while (isdigit(c) || c == '.')
+            {
+                tokens[token_count].value[j++] = c;
+                index++;
+            }
+
+            tokens[token_count].type = NUMBER;
+            tokens[token_count].value[j] = '\0';
+            token_count++;
+            continue;
+        }
+
+        // CHeck pour les paranthéses
+
+        if(c == '('){
+            tokens[token_count].type = LEFT_PAREN;
+            tokens[token_count].value[0] = c;
+            tokens[token_count].value[1] = '\0';
+            token_count++;
+            index++;
+            continue;
+        }
+
+
+        if(c == ')'){
+            tokens[token_count].type = RIGHT_PAREN;
+            tokens[token_count].value[0] = c;
+            tokens[token_count].value[1] = '\0';
+            token_count++;
+            index++;
+            continue;
+        }
+
+        if(isalpha(c)){
+            tokens[token_count].type = VARIABLE;
+            tokens[token_count].value[0] = c;
+            tokens[token_count].value[1] = '\0';
+            token_count++;
+            index++;
+            continue;
+        }
+
+        fprintf(stderr, "Invalid character [%c]!\n",c);
+        exit(EXIT_FAILURE);
+    }
+
+    // ajouter un end_of_tokens
+    tokens[token_count].type = OPERATOR;
+    strcpy(tokens[token_count].value, "EOF");
+
+    return tokens;
+}
+
+
+
 char *getMathFunctionInput()
 {
     char *string = malloc(BUFFER_SIZE);
@@ -97,6 +203,13 @@ int main(int argc, char const *argv[])
     describeGraph(_graph);
 
     char *userInput = getMathFunctionInput();
+    Token *tokens = tokenize(userInput);
+
+    // Print tokens for demonstration
+    for (int i = 0; tokens[i].type != OPERATOR || strcmp(tokens[i].value, "EOF") != 0; i++) {
+        printf("Token: %s\n", tokens[i].value);
+    }
+
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -111,5 +224,6 @@ int main(int argc, char const *argv[])
     CloseWindow();
     free(_graph);
     free(userInput);
+    free(tokens);
     return 0;
 }
