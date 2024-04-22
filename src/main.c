@@ -86,8 +86,12 @@ bool is_operator(char c){
 }
 
 Token *tokenize(const char* input){
-    Token* tokens = malloc(sizeof(Token) * (strlen(input) + 1)); // +1 for the end-of-tokens marker
- // Alloue la taille (token * la_taille_de_la_chaine) 
+    Token* tokens = malloc(sizeof(Token) * (strlen(input) + 1));  // Alloue la taille (token * la_taille_de_la_chaine) 
+    if(!tokens){
+        fprintf(stderr, "Error allocating the memory !\n");
+        exit(EXIT_FAILURE);
+    }
+ 
     int token_count = 0; // voir le nombre de tokens
 
     int index = 0;
@@ -102,7 +106,7 @@ Token *tokenize(const char* input){
 
         // Check pour les opérateurs
         if(is_operator(c)){
-            tokens[token_count].type = OPERATOR; // TYpe du token operateur
+            tokens[token_count].type = OPERATOR; // TYpe du token = operateur
             tokens[token_count].value[0] = c; // valeur du token
             tokens[token_count].value[1] = '\0';
             token_count++; // incrementer la taille 
