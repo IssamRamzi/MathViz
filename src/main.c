@@ -86,6 +86,7 @@ bool is_operator(char c){
 }
 
 Token *tokenize(const char* input){
+    printf("In Parsing Method !");
     Token* tokens = malloc(sizeof(Token) * (strlen(input) + 1));  // Alloue la taille (token * la_taille_de_la_chaine) 
     if(!tokens){
         fprintf(stderr, "Error allocating the memory !\n");
